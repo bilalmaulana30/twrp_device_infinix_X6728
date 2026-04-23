@@ -1,4 +1,5 @@
 import /init.cgroup.rc
+import /init.tee.rc
 
 on init
     setprop sys.usb.configfs 1
@@ -8,6 +9,7 @@ on init
 	symlink /system/etc/cgroups.json /etc/cgroups.json
 	symlink /system/etc/task_profiles.json /etc/task_profiles.json
 	symlink /system/etc/recovery.fstab /etc/recovery.fstab
+	setprop crypto.ready 1
 	start boot-hal-1-2
 	
 on fs
@@ -16,6 +18,8 @@ on fs
     start adbd
 	
 on post-fs-data
+	mkdir /data/misc 01771 root root
+    mkdir /data/misc/keystore 0700 root root
 	start health-hal-2-1
 
 on post-fs
@@ -43,5 +47,33 @@ service mtk.plpath.utils.link /system/bin/mtk_plpath_utils
     oneshot
     seclabel u:r:recovery:s0
 	
+service keystore2 /system/bin/keystore2 /data/misc/keystore
+	interface aidl android.system.keystore2.IKeystoreService/default
+	class early_hal
+	user root
+	group root readproc log
+	task_profiles ProcessCapacityHigh
+	rlimit memlock unlimited unlimited
+	seclabel u:r:recovery:s0
+
+service vendor.gatekeeper-1-0 /vendor/bin/hw/android.hardware.gatekeeper@1.0-service
+    interface android.hardware.gatekeeper@1.0::IGatekeeper default
+    user root
+    group root
+    disabled
+    seclabel u:r:recovery:s0
+
+service vendor.keymint-trustonic /vendor/bin/hw/android.hardware.security.keymint-service.trustonic
+    class early_hal
+    interface android.hardware.keymaster@4.0::IKeymasterDevice default
+    interface android.hardware.keymaster@4.1::IKeymasterDevice default
+    user nobody
+    seclabel u:r:recovery:s0
+
+on property:ro.crypto.state=encrypted && property:ro.boot.dynamic_partitions=true
+    start mobicore
+    start vendor.gatekeeper-1-0
+    start vendor.keymint-trustonic
+
 on property:servicemanager.ready=true
     setprop sys.boot_completed 1
