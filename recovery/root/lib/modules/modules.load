@@ -41,7 +41,6 @@ mtk-dvfsrc.ko
 mtk-dvfsrc-regulator.ko
 mtk_dramc.ko
 mtk-emi.ko
-mtk-dvfsrc-helper.ko
 tran_sd_mod.ko
 tran_scsi_mod.ko
 tran-ufshcd-pltfrm.ko
@@ -86,7 +85,6 @@ pmic_lbat_service.ko
 pmic_lvsys_notify.ko
 mtk-pmic-keys.ko
 mtk-kpd.ko
-sspm_v1.ko
 mmprofile.ko
 mme.ko
 mtk_cpuhp.ko
