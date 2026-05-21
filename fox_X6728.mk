@@ -11,7 +11,7 @@ $(call inherit-product, device/infinix/X6728/device.mk)
 $(call inherit-product, vendor/twrp/config/common.mk)
 
 # Product Specifics
-PRODUCT_NAME := twrp_X6728
+PRODUCT_NAME := orangefox_X6728
 PRODUCT_DEVICE := X6728
 PRODUCT_BRAND := Infinix
 PRODUCT_MODEL := Infinix X6728
